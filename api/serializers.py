@@ -6,7 +6,16 @@ from .models import Collection, Link
 class LinkSerializer(serializers.ModelSerializer):
     class Meta:
         model = Link
-        fields = ["id", "url", "title", "description", "image", "type", "created_at"]
+        fields = [
+            "id",
+            "url",
+            "title",
+            "description",
+            "image",
+            "type",
+            "created_at",
+            "updated_at",
+        ]
 
 
 class CollectionSerializer(serializers.ModelSerializer):
