@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 """
 
 import os
+from datetime import timedelta
 from pathlib import Path
 
 from dotenv import load_dotenv
@@ -178,7 +179,7 @@ REST_FRAMEWORK = {
         "rest_framework_simplejwt.authentication.JWTAuthentication",
     ],
     "DEFAULT_PERMISSION_CLASSES": [
-        "rest_framework.permissions.IsAuthenticated",
+        "rest_framework.permissions.AllowAny",
     ],
 }
 
@@ -190,15 +191,20 @@ DJOSER = {
         "user_create": "api.serializers.CustomUserCreateSerializer",
         "user": "djoser.serializers.UserSerializer",
     },
+    "TOKEN_MODEL": None,
     "PASSWORD_RESET_CONFIRM_URL": "password/reset/confirm/{uid}/{token}",
     "SEND_ACTIVATION_EMAIL": False,
     "SEND_CONFIRMATION_EMAIL": False,
 }
 
+
 SIMPLE_JWT = {
-    "ACCESS_TOKEN_LIFETIME": os.environ.get("ACCESS_TOKEN_LIFETIME_MINUTES"),
-    "REFRESH_TOKEN_LIFETIME": os.environ.get("REFRESH_TOKEN_LIFETIME_DAYS"),
+    "ACCESS_TOKEN_LIFETIME": timedelta(
+        minutes=float(os.environ.get("ACCESS_TOKEN_LIFETIME_MINUTES"))
+    ),
+    "REFRESH_TOKEN_LIFETIME": timedelta(
+        days=float(os.environ.get("REFRESH_TOKEN_LIFETIME_DAYS"))
+    ),
     "ROTATE_REFRESH_TOKENS": True,
     "BLACKLIST_AFTER_ROTATION": True,
-    "UPDATE_LAST_LOGIN": True,
 }
