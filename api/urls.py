@@ -4,7 +4,7 @@ from .views import CollectionViewSet, LinkViewSet
 
 router = DefaultRouter()
 router.register("links", LinkViewSet, basename="link")
-router.register("сollections", CollectionViewSet, basename="collection")
+router.register("collections", CollectionViewSet, basename="collection")
 
 urlpatterns = [
     path("", include(router.urls)),
