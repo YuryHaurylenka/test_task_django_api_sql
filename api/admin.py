@@ -8,7 +8,7 @@ from .utils import fetch_og_data
 @admin.register(CustomUser)
 class CustomUserAdmin(UserAdmin):
     model = CustomUser
-    list_display = ("email", "is_staff", "is_active", "date_joined")
+    list_display = ("id", "email", "is_staff", "is_active", "date_joined")
     list_filter = ("is_staff", "is_active")
     search_fields = ("email",)
     ordering = ("email",)
@@ -31,7 +31,7 @@ class CustomUserAdmin(UserAdmin):
 
 @admin.register(Link)
 class LinkAdmin(admin.ModelAdmin):
-    list_display = ("url", "title", "user", "type", "created_at", "updated_at")
+    list_display = ("id", "url", "title", "user", "type", "created_at", "updated_at")
     search_fields = ("title", "url", "description")
     list_filter = ("user", "type", "created_at")
     readonly_fields = (
@@ -61,7 +61,7 @@ class LinkAdmin(admin.ModelAdmin):
 
 @admin.register(Collection)
 class CollectionAdmin(admin.ModelAdmin):
-    list_display = ("title", "user", "created_at", "updated_at")
+    list_display = ("id", "title", "user", "created_at", "updated_at")
     search_fields = ("title", "description")
     list_filter = ("user", "created_at", "updated_at")
     filter_horizontal = ("links",)
