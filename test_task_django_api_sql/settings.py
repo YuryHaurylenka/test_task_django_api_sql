@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     "djoser",
     "rest_framework_simplejwt",
     "django_filters",
+    "drf_yasg",
     # my own apps
     "api.apps.ApiConfig",
 ]
