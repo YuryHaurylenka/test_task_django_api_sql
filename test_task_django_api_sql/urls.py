@@ -29,12 +29,12 @@ schema_view = get_schema_view(
     ),
     public=True,
     permission_classes=[permissions.AllowAny],
+    authentication_classes=[],
 )
 
 urlpatterns = [
     path("admin/", admin.site.urls),
-    path("auth/", include("djoser.urls")),
-    path("auth/", include("djoser.urls.jwt")),
+    path("auth/", include("api.custom_auth_urls")),
     path("api/", include("api.urls")),
     path(
         "swagger/",

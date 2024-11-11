@@ -55,6 +55,8 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
+    # my own middlewares
+    "api.middleware.AddAuthorizationHeaderMiddleware",
 ]
 
 ROOT_URLCONF = "test_task_django_api_sql.urls"
@@ -178,9 +180,17 @@ REST_FRAMEWORK = {
     "DEFAULT_PERMISSION_CLASSES": [
         "rest_framework.permissions.IsAuthenticated",
     ],
-    "DEFAULT_FILTER_BACKENDS": [
-        "django_filters.rest_framework.DjangoFilterBackend",
-    ],
-    "DEFAULT_PAGINATION_CLASS": "rest_framework.pagination.PageNumberPagination",
-    "PAGE_SIZE": 10,
+}
+
+AUTH_USER_MODEL = "api.CustomUser"
+
+DJOSER = {
+    "LOGIN_FIELD": "email",
+    "SERIALIZERS": {
+        "user_create": "api.serializers.CustomUserCreateSerializer",
+        "user": "djoser.serializers.UserSerializer",
+    },
+    "PASSWORD_RESET_CONFIRM_URL": "password/reset/confirm/{uid}/{token}",
+    "SEND_ACTIVATION_EMAIL": False,
+    "SEND_CONFIRMATION_EMAIL": False,
 }

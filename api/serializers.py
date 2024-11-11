@@ -1,6 +1,10 @@
+from django.contrib.auth import get_user_model
+from djoser.serializers import UserCreateSerializer
 from rest_framework import serializers
 
 from .models import Collection, Link
+
+User = get_user_model()
 
 
 class LinkSerializer(serializers.ModelSerializer):
@@ -35,3 +39,9 @@ class CollectionSerializer(serializers.ModelSerializer):
             "created_at",
             "updated_at",
         ]
+
+
+class CustomUserCreateSerializer(UserCreateSerializer):
+    class Meta(UserCreateSerializer.Meta):
+        model = User
+        fields = ("email", "password")
