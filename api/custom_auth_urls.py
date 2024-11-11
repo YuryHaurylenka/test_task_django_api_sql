@@ -1,9 +1,10 @@
 from django.urls import path
-from djoser.views import UserViewSet
-from api.views import CustomTokenObtainPairView
-from rest_framework_simplejwt.views import (
-    TokenRefreshView,
-    TokenVerifyView,
+
+from .views import (
+    CustomTokenObtainPairView,
+    CustomTokenRefreshView,
+    CustomTokenVerifyView,
+    CustomUserViewSet,
 )
 
 urlpatterns = [
@@ -14,32 +15,32 @@ urlpatterns = [
     ),
     path(
         "jwt/refresh/",
-        TokenRefreshView.as_view(),
+        CustomTokenRefreshView.as_view(),
         name="jwt-refresh",
     ),
     path(
         "jwt/verify/",
-        TokenVerifyView.as_view(),
+        CustomTokenVerifyView.as_view(),
         name="jwt-verify",
     ),
     path(
         "register/",
-        UserViewSet.as_view({"post": "create"}),
+        CustomUserViewSet.as_view({"post": "create"}),
         name="register",
     ),
     path(
-        "users/set_password/",
-        UserViewSet.as_view({"post": "set_password"}),
-        name="set-password",
+        "register/",
+        CustomUserViewSet.as_view({"post": "create"}),
+        name="register",
     ),
     path(
         "users/reset_password/",
-        UserViewSet.as_view({"post": "reset_password"}),
+        CustomUserViewSet.as_view({"post": "reset_password"}),
         name="reset-password",
     ),
     path(
-        "users/reset_password_confirm/",
-        UserViewSet.as_view({"post": "reset_password_confirm"}),
-        name="reset-password-confirm",
+        "users/set_password/",
+        CustomUserViewSet.as_view({"post": "set_password"}),
+        name="set-password",
     ),
 ]
