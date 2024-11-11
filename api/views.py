@@ -2,8 +2,8 @@ from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import filters
 from rest_framework import permissions, viewsets
 
-from .models import Link
-from .serializers import LinkSerializer
+from .models import Collection, Link
+from .serializers import CollectionSerializer, LinkSerializer
 from .utils import fetch_og_data
 
 
@@ -30,3 +30,12 @@ class LinkViewSet(viewsets.ModelViewSet):
             )
         else:
             serializer.save(user=self.request.user)
+
+
+class CollectionViewSet(viewsets.ModelViewSet):
+    queryset = Collection.objects.all()
+    serializer_class = CollectionSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    def perform_create(self, serializer):
+        serializer.save(user=self.request.user)
