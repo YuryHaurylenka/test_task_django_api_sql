@@ -1,9 +1,11 @@
 from drf_yasg import openapi
-from drf_yasg import openapi
 from drf_yasg.utils import swagger_auto_schema
-from rest_framework import permissions, viewsets
+from rest_framework import permissions, status, viewsets
+from rest_framework.decorators import action
+from rest_framework.exceptions import NotFound
+from rest_framework.response import Response
 
-from ..models import Collection
+from ..models import Collection, Link
 from ..permissions import IsOwnerOrReadOnly
 from ..serializers import (
     CollectionDetailSerializer,
@@ -46,6 +48,79 @@ class CollectionViewSet(viewsets.ModelViewSet):
     )
     def create(self, request, *args, **kwargs):
         return super().create(request, *args, **kwargs)
+
+    @swagger_auto_schema(
+        operation_summary="Retrieve a Collection",
+        operation_description="Get details of a specific collection using its unique ID.",
+        responses={
+            200: openapi.Response(
+                description="Successfully retrieved collection details.",
+                schema=CollectionDetailSerializer,
+            ),
+            404: "Collection not found.",
+            403: "Forbidden - You do not have permission to access this collection.",
+        },
+    )
+    def retrieve(self, request, *args, **kwargs):
+        return super().retrieve(request, *args, **kwargs)
+
+    @action(detail=False, methods=["get"], url_path="search")
+    @swagger_auto_schema(
+        operation_summary="Search Collections",
+        operation_description="Search for collections by title or by link ID. You can use either 'search' or 'link_id' or both.",
+        manual_parameters=[
+            openapi.Parameter(
+                "search",
+                openapi.IN_QUERY,
+                description="Search by exact match on collection title",
+                type=openapi.TYPE_STRING,
+                required=False,
+            ),
+            openapi.Parameter(
+                "link_id",
+                openapi.IN_QUERY,
+                description="Search collections containing a specific link ID",
+                type=openapi.TYPE_INTEGER,
+                required=False,
+            ),
+        ],
+        responses={
+            200: openapi.Response(
+                description="Successfully found collections",
+                schema=CollectionDetailSerializer(many=True),
+            ),
+            400: "Bad request - validation errors.",
+        },
+    )
+    def search(self, request, *args, **kwargs):
+        search_query = request.query_params.get("search")
+        link_id = request.query_params.get("link_id")
+
+        if not search_query and not link_id:
+            return Response(
+                {"detail": "Either 'search' or 'link_id' parameter is required."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        collections = self.get_queryset()
+
+        if search_query:
+            collections = collections.filter(title__icontains=search_query)
+
+        if link_id:
+            try:
+                link = Link.objects.get(id=link_id)
+                collections = collections.filter(links=link)
+            except Link.DoesNotExist:
+                raise NotFound({"detail": "Link with this ID not found."})
+
+        if not collections.exists():
+            raise NotFound(
+                {"detail": "No collections found matching the search criteria."}
+            )
+
+        serializer = self.get_serializer(collections, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
     @swagger_auto_schema(
         operation_summary="Update a Collection",
@@ -92,18 +167,3 @@ class CollectionViewSet(viewsets.ModelViewSet):
     )
     def destroy(self, request, *args, **kwargs):
         return super().destroy(request, *args, **kwargs)
-
-    @swagger_auto_schema(
-        operation_summary="Retrieve a Collection",
-        operation_description="Get details of a specific collection using its unique ID.",
-        responses={
-            200: openapi.Response(
-                description="Successfully retrieved collection details.",
-                schema=CollectionDetailSerializer,
-            ),
-            404: "Collection not found.",
-            403: "Forbidden - You do not have permission to access this collection.",
-        },
-    )
-    def retrieve(self, request, *args, **kwargs):
-        return super().retrieve(request, *args, **kwargs)
