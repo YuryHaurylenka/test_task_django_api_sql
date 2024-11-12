@@ -7,7 +7,13 @@ from .models import Collection, Link
 User = get_user_model()
 
 
-class LinkSerializer(serializers.ModelSerializer):
+class LinkCreateSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Link
+        fields = ["url"]
+
+
+class LinkDetailSerializer(serializers.ModelSerializer):
     class Meta:
         model = Link
         fields = [
@@ -22,8 +28,8 @@ class LinkSerializer(serializers.ModelSerializer):
         ]
 
 
-class CollectionSerializer(serializers.ModelSerializer):
-    links = LinkSerializer(many=True, read_only=True)
+class CollectionDetailSerializer(serializers.ModelSerializer):
+    links = LinkDetailSerializer(many=True, read_only=True)
     link_ids = serializers.PrimaryKeyRelatedField(
         queryset=Link.objects.all(), write_only=True, many=True, source="links"
     )
