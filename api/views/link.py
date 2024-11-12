@@ -1,8 +1,9 @@
-from drf_yasg import openapi
+from django.db import models
 from drf_yasg import openapi
 from drf_yasg.utils import swagger_auto_schema
 from rest_framework import permissions, viewsets
 from rest_framework import status
+from rest_framework.decorators import action
 from rest_framework.exceptions import ValidationError
 from rest_framework.response import Response
 
@@ -12,7 +13,7 @@ from ..serializers import (
     LinkCreateSerializer,
     LinkDetailSerializer,
 )
-from ..utils import fetch_og_data
+from ..utils import extract_uri, fetch_og_data
 
 
 class LinkViewSet(viewsets.ModelViewSet):
@@ -75,7 +76,7 @@ class LinkViewSet(viewsets.ModelViewSet):
 
     @swagger_auto_schema(
         operation_summary="Retrieve a Link",
-        operation_description="Get detailed information about a specific link using its unique ID. Access is restricted to the owner of the link.",
+        operation_description="Get information about a specific link. Access is restricted to the owner of the link.",
         responses={
             200: openapi.Response(
                 description="Successfully retrieved link details.",
@@ -87,6 +88,57 @@ class LinkViewSet(viewsets.ModelViewSet):
     )
     def retrieve(self, request, *args, **kwargs):
         return super().retrieve(request, *args, **kwargs)
+
+    @action(
+        detail=False,
+        methods=["get"],
+        url_path="search",
+        permission_classes=[permissions.IsAuthenticated],
+    )
+    @swagger_auto_schema(
+        operation_summary="Search Links by URL",
+        operation_description="Search for links owned by the authenticated user using match on 'url'.",
+        manual_parameters=[
+            openapi.Parameter(
+                "search",
+                openapi.IN_QUERY,
+                description="Search by match on URL (URI part only)",
+                type=openapi.TYPE_STRING,
+                required=True,
+            )
+        ],
+        responses={
+            200: openapi.Response(
+                description="Successfully found links",
+                schema=LinkDetailSerializer(many=True),
+            ),
+            400: "Bad request - validation errors.",
+        },
+    )
+    def search(self, request, *args, **kwargs):
+        search_query = request.query_params.get("search", "").strip().lower()
+
+        if not search_query:
+            return Response(
+                {"detail": "Search parameter is required."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        cleaned_search_query = extract_uri(search_query)
+
+        links = Link.objects.filter(user=request.user).filter(
+            models.Q(title__iexact=search_query)
+            | models.Q(url__icontains=cleaned_search_query)
+        )
+
+        if not links.exists():
+            return Response(
+                {"detail": "No links found matching the search criteria."},
+                status=status.HTTP_404_NOT_FOUND,
+            )
+
+        serializer = self.get_serializer(links, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
     @swagger_auto_schema(
         operation_summary="Update a Link",
