@@ -1,4 +1,5 @@
 import logging
+import re
 
 import requests
 from bs4 import BeautifulSoup
@@ -55,3 +56,8 @@ def fetch_og_data(url):
             "image": "https://example.com/default-image.jpg",
             "type": "website",
         }
+
+
+def extract_uri(url):
+    url = re.sub(r"^https?://(www\.)?", "", url, flags=re.IGNORECASE)
+    return url.split("/", 1)[-1] if "/" in url else url
