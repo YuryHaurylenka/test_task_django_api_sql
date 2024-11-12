@@ -191,7 +191,6 @@ DJOSER = {
         "user_create": "api.serializers.CustomUserCreateSerializer",
         "user": "djoser.serializers.UserSerializer",
     },
-    "TOKEN_MODEL": None,
     "PASSWORD_RESET_CONFIRM_URL": "password/reset/confirm/{uid}/{token}",
     "SEND_ACTIVATION_EMAIL": False,
     "SEND_CONFIRMATION_EMAIL": False,
