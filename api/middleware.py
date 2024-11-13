@@ -17,6 +17,8 @@ class AddAuthorizationHeaderMiddleware(MiddlewareMixin):
     def process_request(self, request):
         if any(request.path.startswith(endpoint) for endpoint in self.PUBLIC_ENDPOINTS):
             return
+        if "HTTP_AUTHORIZATION" in request.META:
+            return
 
         access_token = request.session.get("access_token")
 
