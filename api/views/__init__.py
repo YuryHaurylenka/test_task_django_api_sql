@@ -1,9 +1,12 @@
 from .collection import CollectionViewSet
 from .link import LinkViewSet
+
+# noinspection PyUnresolvedReferences
 from .user import (
-    UserViewSet,
-    CustomUserViewSet,
+    CustomTokenObtainPairView,
     CustomTokenRefreshView,
     CustomTokenVerifyView,
-    CustomTokenObtainPairView,
+    CustomUserViewSet,
+    UserViewSet,
+    CustomTopUsersViewSet,
 )
