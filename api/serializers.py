@@ -1,8 +1,5 @@
-from datetime import timedelta, timezone
-
 from django.contrib.auth import get_user_model
 from djoser.serializers import (
-    SendEmailResetSerializer,
     UserCreateSerializer,
 )
 from rest_framework import serializers
@@ -10,6 +7,7 @@ from rest_framework.exceptions import NotFound, ValidationError
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 
 from .models import Collection, Link, PasswordResetCode
+from .utils import generate_reset_code, send_password_reset_email
 
 User = get_user_model()
 
@@ -77,18 +75,25 @@ class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
         return super().validate(attrs)
 
 
-class CustomPasswordResetSerializer(SendEmailResetSerializer):
-    email = serializers.EmailField(
-        help_text="Enter your email address",
-    )
+class CustomPasswordResetSerializer(serializers.Serializer):
+    email = serializers.EmailField()
 
-    def validate(self, attrs):
-        email = attrs.get("email")
+    def validate(self, data):
+        email = data.get("email")
+        user_exists = User.objects.filter(email=email).exists()
 
-        if not User.objects.filter(email=email).exists():
+        if not user_exists:
             raise NotFound(detail="User with this email does not exist", code=404)
 
-        return super().validate(attrs)
+        return data
+
+    def save(self):
+        email = self.validated_data["email"]
+        user = User.objects.get(email=email)
+
+        reset_code_obj = generate_reset_code(user)
+
+        send_password_reset_email(user, reset_code_obj.code)
 
 
 class CustomPasswordResetConfirmSerializer(serializers.Serializer):
