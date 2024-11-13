@@ -130,6 +130,15 @@ enabled.
     - Admin panel: [http://localhost:8000/admin](http://localhost:8000/admin)
     - Swagger UI: [http://localhost:8000/swagger/](http://localhost:8000/swagger/)
 
+### Admin Panel
+
+To access the admin panel, visit `/admin`.
+
+Upon build, a superuser is automatically created with the following credentials:
+
+- **Email**: `admin@example.com`
+- **Password**: `adminpassword`
+
 ## API Endpoints
 
 Below are the most important API endpoints available in this project. Note that all operations related to **links** and
@@ -199,10 +208,6 @@ The endpoint performs the following:
 2. Fetches the data and returns the results through the API.
 3. Additionally, the results are saved in a CSV file named `top_users_output.csv` located in the project's root
    directory.
-
-## Admin Panel
-
-Access the admin panel at `/admin` for managing users, links, and collections.
 
 ## License
 
@@ -340,6 +345,15 @@ SESSION_COOKIE_SECURE=False
     - Админка: [http://localhost:8000/admin](http://localhost:8000/admin)
     - Swagger UI: [http://localhost:8000/swagger/](http://localhost:8000/swagger/)
 
+### Админка
+
+Для доступа к админ-панели используйте `/admin`.
+
+При сборке автоматически создаётся суперпользователь со следующими данными:
+
+- **Email**: `admin@example.com`
+- **Пароль**: `adminpassword`
+
 ## API эндпоинты
 
 ### **Регистрация пользователя**
@@ -397,10 +411,6 @@ docker-compose exec web python generate_data.py
 2. Извлекает данные и возвращает результаты через API.
 3. Дополнительно сохраняет результаты в CSV файл под названием `top_users_output.csv`, который находится в корневой
    директории проекта.
-
-## Админка
-
-Админка доступна по адресу `/admin` для управления пользователями и данными.
 
 ## Лицензия
 
