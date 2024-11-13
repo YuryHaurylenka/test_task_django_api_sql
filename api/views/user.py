@@ -107,12 +107,13 @@ class CustomUserViewSet(UserViewSet):
     )
     def reset_password(self, request):
         serializer = CustomPasswordResetSerializer(data=request.data)
-        if not serializer.is_valid():
-            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-        email = request.data.get("email")
-        response = send_password_reset_email(email)
-        return response
+        if serializer.is_valid():
+            serializer.save()
+            return Response(
+                {"detail": "Password reset email sent"},
+                status=status.HTTP_204_NO_CONTENT,
+            )
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     @swagger_auto_schema(
         operation_summary="Set new password",
