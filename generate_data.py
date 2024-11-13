@@ -5,8 +5,7 @@ import string
 
 import httpx
 
-logger = logging.getLogger(__name__)
-logger.setLevel(logging.INFO)
+logger = logging.getLogger("api")
 
 BASE_URL = "http://localhost:8000"
 REGISTER_URL = f"{BASE_URL}/auth/register/"
