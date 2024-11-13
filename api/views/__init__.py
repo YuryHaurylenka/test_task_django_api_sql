@@ -6,7 +6,7 @@ from .user import (
     CustomTokenObtainPairView,
     CustomTokenRefreshView,
     CustomTokenVerifyView,
+    CustomTopUsersViewSet,
     CustomUserViewSet,
     UserViewSet,
-    CustomTopUsersViewSet,
 )

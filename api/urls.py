@@ -1,6 +1,7 @@
-from django.urls import path, include
+from django.urls import include, path
 from rest_framework.routers import DefaultRouter
-from .views import LinkViewSet, CollectionViewSet, CustomTopUsersViewSet
+
+from .views import CollectionViewSet, CustomTopUsersViewSet, LinkViewSet
 
 router = DefaultRouter()
 router.register("links", LinkViewSet, basename="link")
