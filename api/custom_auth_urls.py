@@ -1,6 +1,7 @@
 from django.urls import path
 
 from .views import (
+    CustomResetPasswordConfirmView,
     CustomTokenObtainPairView,
     CustomTokenRefreshView,
     CustomTokenVerifyView,
@@ -37,6 +38,11 @@ urlpatterns = [
         "users/reset_password/",
         CustomUserViewSet.as_view({"post": "reset_password"}),
         name="reset-password",
+    ),
+    path(
+        "users/reset_password_confirm/",
+        CustomResetPasswordConfirmView.as_view(),
+        name="reset-password-confirm",
     ),
     path(
         "users/set_password/",

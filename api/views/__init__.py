@@ -9,4 +9,5 @@ from .user import (
     CustomTopUsersViewSet,
     CustomUserViewSet,
     UserViewSet,
+    CustomResetPasswordConfirmView,
 )
