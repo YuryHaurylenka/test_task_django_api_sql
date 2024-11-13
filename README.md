@@ -8,7 +8,7 @@ Open Graph metadata and categorizing links. The system supports user registratio
 features for creating and managing collections of various link types (e.g., music, book, article, video). Additionally,
 the project includes an **SQL task** for identifying the top 10 users who have saved the most links.
 
-## 📋 Table of Contents
+## Table of Contents
 
 - [Features](#-features)
 - [Requirements](#-requirements)
@@ -25,7 +25,7 @@ the project includes an **SQL task** for identifying the top 10 users who have s
 
 ---
 
-## 🚀 Features
+## Features
 
 - User registration, login, and authentication using JWT tokens.
 - Password reset functionality with verification code (code expires after 30 minutes, a new request invalidates the
@@ -37,7 +37,7 @@ the project includes an **SQL task** for identifying the top 10 users who have s
 - CSV file generation for the top 10 users with the most links.
 - Swagger UI for interactive API documentation and testing.
 
-## 🛠 Requirements
+## Requirements
 
 - Python 3.12
 - Django 5.0
@@ -48,7 +48,7 @@ the project includes an **SQL task** for identifying the top 10 users who have s
 - Docker & Docker Compose
 - PostgreSQL
 
-## 🛠 Installation
+## Installation
 
 1. **Clone the repository**:
    ```bash
@@ -59,7 +59,7 @@ the project includes an **SQL task** for identifying the top 10 users who have s
 2. **Create a `.env` file**:
    Copy the contents of `.env.example` to a new `.env` file and adjust the environment variables as needed.
 
-## 📄 Example `.env` File
+## Example `.env` File
 
 ```env
 SECRET_KEY=your_secret_key
@@ -79,7 +79,7 @@ CSRF_COOKIE_SECURE=False
 SESSION_COOKIE_SECURE=False
 ```
 
-### 📄 Explanation of Environment Variables
+### Explanation of Environment Variables
 
 - **`SECRET_KEY`**: A unique secret key used by Django for cryptographic signing. Keep this secure.
 - **`DEBUG`**: Enables or disables debug mode. Set to `True` for development and `False` for production.
@@ -100,7 +100,7 @@ SESSION_COOKIE_SECURE=False
 
 ---
 
-### 📧 Detailed Instructions for `EMAIL_HOST_PASSWORD`
+### Detailed Instructions for `EMAIL_HOST_PASSWORD`
 
 To securely use Gmail for sending emails (such as password resets), you need to generate an **app-specific password**
 instead of using your regular Gmail password. Google enforces this for security, especially if 2-Step Verification is
@@ -130,7 +130,7 @@ enabled.
     - Admin panel: [http://localhost:8000/admin](http://localhost:8000/admin)
     - Swagger UI: [http://localhost:8000/swagger/](http://localhost:8000/swagger/)
 
-## 📊 API Endpoints
+## API Endpoints
 
 Below are the most important API endpoints available in this project. Note that all operations related to **links** and
 **collections** are only accessible to authenticated users.
@@ -172,7 +172,7 @@ Below are the most important API endpoints available in this project. Note that 
   Allows the user to create a new collection with a title and optional description. Available only to authenticated
   users.
 
-## 🗃 Generating Sample Data
+## Generating Sample Data
 
 To generate test users and links, use the script:
 
@@ -180,7 +180,7 @@ To generate test users and links, use the script:
 docker-compose exec web python generate_data.py
 ```
 
-## 🗂 SQL Task
+## SQL Task
 
 There is an API endpoint available at `/api/users/top-users/` that executes the SQL script located in the root directory
 under the filename `top_users.sql`. Before testing, you can generate sample users and links using
@@ -200,11 +200,11 @@ The endpoint performs the following:
 3. Additionally, the results are saved in a CSV file named `top_users_output.csv` located in the project's root
    directory.
 
-## 🛠 Admin Panel
+## Admin Panel
 
 Access the admin panel at `/admin` for managing users, links, and collections.
 
-## 📜 License
+## License
 
 This project is licensed under
 the [MIT License](https://github.com/YuryHaurylenka/test_task_django_api_sql/blob/main/LICENSE).
@@ -228,7 +228,7 @@ the [MIT License](https://github.com/YuryHaurylenka/test_task_django_api_sql/blo
 музыка, книги, статьи, видео). Также дополнительно, проект содержит **SQL задание** для определения топ-10
 пользователей, которые сохранили наибольшее количество ссылок.
 
-## 📋 Содержание
+## Содержание
 
 - [Функциональность](#-функциональность)
 - [Требования](#-стек)
@@ -243,7 +243,7 @@ the [MIT License](https://github.com/YuryHaurylenka/test_task_django_api_sql/blo
 - [Админка и настройка Email](#-админка)
 - [Лицензия](#-лицензия)
 
-## 🚀 Функциональность
+## Функциональность
 
 - Регистрация пользователей, вход и аутентификация через JWT токены.
 - Сброс пароля с использованием кода подтверждения (код истекает через 30 минут; новый запрос аннулирует предыдущий
@@ -255,7 +255,7 @@ the [MIT License](https://github.com/YuryHaurylenka/test_task_django_api_sql/blo
 - Генерация CSV файла для топ-10 пользователей с наибольшим количеством ссылок.
 - Swagger UI для интерактивного тестирования и документации API.
 
-## 🛠 Стек
+## Стек
 
 - Python 3.12
 - Django 5.0
@@ -266,7 +266,7 @@ the [MIT License](https://github.com/YuryHaurylenka/test_task_django_api_sql/blo
 - Docker и Docker Compose
 - PostgreSQL
 
-## 🛠 Установка
+## Установка
 
 1. **Клонируйте репозиторий**:
    ```bash
@@ -277,7 +277,7 @@ the [MIT License](https://github.com/YuryHaurylenka/test_task_django_api_sql/blo
 2. **Создайте файл `.env`**:
    Скопируйте содержимое `.env.example` в новый файл `.env` и настройте переменные окружения.
 
-## 📄 Пример файла `.env`
+## Пример файла `.env`
 
 ```env
 SECRET_KEY=your_secret_key
@@ -297,7 +297,7 @@ CSRF_COOKIE_SECURE=False
 SESSION_COOKIE_SECURE=False
 ```
 
-### 📄 Объяснение переменных окружения
+### Объяснение переменных окружения
 
 - **`SECRET_KEY`**: Уникальный секретный ключ, используемый Django.
 - **`DEBUG`**: Включает или отключает режим отладки. Установите `True` для разработки.
@@ -317,7 +317,7 @@ SESSION_COOKIE_SECURE=False
 - **`CSRF_COOKIE_SECURE`** и **`SESSION_COOKIE_SECURE`**: Обеспечивает отправку cookie только по HTTPS.
   Установите `False` в режиме разработки.
 
-### 📧 Инструкция по настройке `EMAIL_HOST_PASSWORD`
+### Инструкция по настройке `EMAIL_HOST_PASSWORD`
 
 1. **Включите двухэтапную аутентификацию** на вашем аккаунте Google. Перейдите
    по [ссылке](https://myaccount.google.com/security).
@@ -328,7 +328,7 @@ SESSION_COOKIE_SECURE=False
     - Выберите **Другое (настраиваемое имя)**, введите "Django App" и нажмите **Создать**.
     - Скопируйте сгенерированный 16-значный пароль и добавьте его в `.env` файл в EMAIL_HOST_PASSWORD.
 
-## 🏃 Запуск проекта
+## Запуск проекта
 
 1. **Соберите и запустите контейнеры**:
    ```bash
@@ -340,7 +340,7 @@ SESSION_COOKIE_SECURE=False
     - Админка: [http://localhost:8000/admin](http://localhost:8000/admin)
     - Swagger UI: [http://localhost:8000/swagger/](http://localhost:8000/swagger/)
 
-## 📊 API эндпоинты
+## API эндпоинты
 
 ### **Регистрация пользователя**
 
@@ -370,7 +370,7 @@ SESSION_COOKIE_SECURE=False
 
 - **Endpoint**: `POST /api/collections/`
 
-## 🗃 Генерация тестовых данных
+## Генерация тестовых данных
 
 Используйте скрипт для генерации тестовых данных:
 
@@ -378,7 +378,7 @@ SESSION_COOKIE_SECURE=False
 docker-compose exec web python generate_data.py
 ```
 
-## 🗂 SQL Задание
+## SQL Задание
 
 Доступен API эндпоинт `/api/users/top-users/`, который выполняет SQL скрипт, расположенный в корневой директории под
 названием `top_users.sql`. Перед использованием, вы можете сгенерировать тестовых пользователей и ссылки с
@@ -398,11 +398,11 @@ docker-compose exec web python generate_data.py
 3. Дополнительно сохраняет результаты в CSV файл под названием `top_users_output.csv`, который находится в корневой
    директории проекта.
 
-## 🛠 Админка
+## Админка
 
 Админка доступна по адресу `/admin` для управления пользователями и данными.
 
-## 📜 Лицензия
+## Лицензия
 
 Проект лицензирован под [MIT Лицензией](https://github.com/YuryHaurylenka/test_task_django_api_sql/blob/main/LICENSE)..
 
