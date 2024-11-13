@@ -8,13 +8,15 @@ from .views import HomeView
 
 schema_view = get_schema_view(
     openapi.Info(
-        title="Link Collection API",
+        title="Django API",
         default_version="v1",
-        description="API documentation for the Link Collection project",
+        description="API documentation for the test project",
+        terms_of_service="https://www.example.com/terms/",
+        contact=openapi.Contact(email="gavrilenkoyury@gmail.com"),
+        license=openapi.License(name="MIT License"),
     ),
     public=True,
     permission_classes=[permissions.AllowAny],
-    authentication_classes=[],
 )
 
 urlpatterns = [
