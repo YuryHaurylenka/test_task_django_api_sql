@@ -20,6 +20,9 @@ class CollectionViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
         return Collection.objects.filter(user=self.request.user)
 
+    def perform_create(self, serializer):
+        serializer.save(user=self.request.user)
+
     @swagger_auto_schema(
         operation_summary="List User's Collections",
         operation_description="Retrieve a list of collections owned by the authenticated user.",

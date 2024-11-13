@@ -36,7 +36,10 @@ class LinkDetailSerializer(serializers.ModelSerializer):
 class CollectionDetailSerializer(serializers.ModelSerializer):
     links = LinkDetailSerializer(many=True, read_only=True)
     link_ids = serializers.PrimaryKeyRelatedField(
-        queryset=Link.objects.all(), write_only=True, many=True, source="links"
+        queryset=Link.objects.all(),
+        write_only=True,
+        many=True,
+        source="links"
     )
 
     class Meta:
@@ -50,6 +53,39 @@ class CollectionDetailSerializer(serializers.ModelSerializer):
             "created_at",
             "updated_at",
         ]
+
+    def validate_link_ids(self, value):
+        user = self.context['request'].user
+        invalid_links = [link.id for link in value if link.user != user]
+        if invalid_links:
+            raise serializers.ValidationError(
+                f"Links with IDs {invalid_links} do not belong to the current user."
+            )
+        return value
+
+    def create(self, validated_data):
+        user = self.context['request'].user
+        validated_data['user'] = user
+        links = validated_data.pop('links', [])
+        collection = Collection.objects.create(**validated_data)
+        collection.links.set(links)
+        return collection
+
+    def update(self, instance, validated_data):
+        links = validated_data.pop('links', [])
+        instance.title = validated_data.get('title', instance.title)
+        instance.description = validated_data.get('description', instance.description)
+        instance.save()
+
+        user = self.context['request'].user
+        for link in links:
+            if link.user != user:
+                raise serializers.ValidationError(
+                    f"Link with ID {link.id} does not belong to the current user."
+                )
+
+        instance.links.set(links)
+        return instance
 
 
 class CustomUserCreateSerializer(UserCreateSerializer):
