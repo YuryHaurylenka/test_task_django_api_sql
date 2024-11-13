@@ -1,6 +1,7 @@
+from datetime import timedelta, timezone
+
 from django.contrib.auth import get_user_model
 from djoser.serializers import (
-    PasswordResetConfirmSerializer,
     SendEmailResetSerializer,
     UserCreateSerializer,
 )
@@ -8,7 +9,7 @@ from rest_framework import serializers
 from rest_framework.exceptions import NotFound, ValidationError
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 
-from .models import Collection, Link
+from .models import Collection, Link, PasswordResetCode
 
 User = get_user_model()
 
@@ -90,26 +91,33 @@ class CustomPasswordResetSerializer(SendEmailResetSerializer):
         return super().validate(attrs)
 
 
-class CustomPasswordResetConfirmSerializer(PasswordResetConfirmSerializer):
-    new_password = serializers.CharField(write_only=True, min_length=8)
-    email = serializers.EmailField()
-    token = serializers.CharField()
+class CustomPasswordResetConfirmSerializer(serializers.Serializer):
+    reset_code = serializers.UUIDField(help_text="Enter the reset code")
+    new_password = serializers.CharField(
+        write_only=True, min_length=8, help_text="Enter your new password"
+    )
 
     def validate(self, attrs):
-        email = attrs.get("email")
-        token = attrs.get("token")
+        reset_code = attrs.get("reset_code")
         new_password = attrs.get("new_password")
 
-        user = User.objects.filter(email=email).first()
-        if not user:
-            raise NotFound("User with this email does not exist.")
+        try:
+            reset_code = PasswordResetCode.objects.get(code=reset_code)
+        except PasswordResetCode.DoesNotExist:
+            raise ValidationError("Invalid reset code.")
 
-        attrs["user"] = user
+        if not reset_code.is_valid():
+            raise ValidationError("Reset code has expired.")
+
+        attrs["user"] = reset_code.user
         return attrs
 
     def save(self):
         user = self.validated_data["user"]
         new_password = self.validated_data["new_password"]
+
         user.set_password(new_password)
         user.save()
+
+        PasswordResetCode.objects.filter(user=user).delete()
         return user

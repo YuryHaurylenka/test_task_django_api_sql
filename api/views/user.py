@@ -17,10 +17,11 @@ from rest_framework_simplejwt.views import (
 )
 
 from api.serializers import (
-    CustomTokenObtainPairSerializer,
     CustomPasswordResetConfirmSerializer,
+    CustomPasswordResetSerializer,
+    CustomTokenObtainPairSerializer,
 )
-from api.utils import save_to_csv
+from api.utils import save_to_csv, send_password_reset_email
 
 User = get_user_model()
 
@@ -79,6 +80,11 @@ class CustomUserViewSet(UserViewSet):
     def create(self, request, *args, **kwargs):
         return super().create(request, *args, **kwargs)
 
+    @action(
+        detail=False,
+        methods=["post"],
+        url_path="reset_password",
+    )
     @swagger_auto_schema(
         operation_summary="Password reset",
         operation_description="Request a password reset email.",
@@ -99,13 +105,14 @@ class CustomUserViewSet(UserViewSet):
             404: "User not found",
         },
     )
-    @action(
-        detail=False,
-        methods=["post"],
-        url_path="reset_password",
-    )
-    def reset_password(self, request, *args, **kwargs):
-        return super().reset_password(request, *args, **kwargs)
+    def reset_password(self, request):
+        serializer = CustomPasswordResetSerializer(data=request.data)
+        if not serializer.is_valid():
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+        email = request.data.get("email")
+        response = send_password_reset_email(email)
+        return response
 
     @swagger_auto_schema(
         operation_summary="Set new password",
@@ -121,29 +128,32 @@ class CustomUserViewSet(UserViewSet):
 
 
 class CustomResetPasswordConfirmView(APIView):
-    serializer_class = CustomPasswordResetConfirmSerializer
 
     @swagger_auto_schema(
-        operation_summary="Password reset confirm",
-        operation_description="URL for accessing to reset password from mail",
+        operation_summary="Reset Password Confirm",
+        operation_description="Enter the reset code and a new password.",
+        request_body=openapi.Schema(
+            type=openapi.TYPE_OBJECT,
+            properties={
+                "reset_code": openapi.Schema(
+                    type=openapi.TYPE_STRING,
+                    description="Password reset code",
+                    example="123e4567-e89b-12d3-a456-426614174000",
+                ),
+                "new_password": openapi.Schema(
+                    type=openapi.TYPE_STRING,
+                    description="New password",
+                    example="newpassword123",
+                ),
+            },
+            required=["reset_code", "new_password"],
+        ),
         responses={
-            200: "Password reset confirmed",
-            400: "Bad request",
+            200: "Password has been reset successfully.",
+            400: "Invalid or expired reset code.",
         },
     )
-    def post(self, request, *args, **kwargs):
-        token = request.query_params.get("token")
-        email = request.query_params.get("email")
-
-        if not token or not email:
-            return Response(
-                {"detail": "Token and email are required in the URL."},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
-
-        request.data["email"] = email
-        request.data["token"] = token
-
+    def post(self, request):
         serializer = CustomPasswordResetConfirmSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
@@ -151,7 +161,6 @@ class CustomResetPasswordConfirmView(APIView):
                 {"detail": "Password has been reset successfully."},
                 status=status.HTTP_200_OK,
             )
-
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
