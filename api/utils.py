@@ -1,11 +1,21 @@
 import csv
 import logging
+import os
 import re
+import uuid
 
 import requests
 from bs4 import BeautifulSoup
+from django.contrib.auth import get_user_model
+from django.core.mail import send_mail
+from rest_framework import status
+from rest_framework.response import Response
+
+from api.models import PasswordResetCode
 
 logger = logging.getLogger("api")
+
+User = get_user_model()
 
 
 def fetch_og_data(url):
@@ -100,3 +110,43 @@ def save_to_csv(data, file_path):
         writer.writeheader()
         for row in data:
             writer.writerow(row)
+
+
+def send_password_reset_email(user_email):
+
+    user = User.objects.filter(email=user_email).first()
+    if not user:
+        return Response({"detail": "User not found."}, status=status.HTTP_404_NOT_FOUND)
+
+    reset_code = PasswordResetCode.objects.create(user=user, code=uuid.uuid4())
+
+    subject = "Password Reset Request"
+    message = (
+        f"Your password reset code is: {reset_code.code}\n"
+        f"Requested for user email: {user_email}"
+    )
+    from_email = os.environ.get("EMAIL_HOST_USER")
+    recipient_email = from_email
+
+    if not from_email:
+        return Response(
+            {"detail": "Email host user is not set in environment variables."},
+            status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+        )
+
+    try:
+        send_mail(
+            subject=subject,
+            message=message,
+            from_email=from_email,
+            recipient_list=[recipient_email],
+            fail_silently=False,
+        )
+        return Response(
+            {"detail": "Password reset email sent."}, status=status.HTTP_204_NO_CONTENT
+        )
+    except Exception as e:
+        return Response(
+            {"detail": f"Failed to send email: {str(e)}"},
+            status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+        )
