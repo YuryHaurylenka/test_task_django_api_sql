@@ -6,12 +6,12 @@ class AddAuthorizationHeaderMiddleware(MiddlewareMixin):
     PUBLIC_ENDPOINTS = [
         "/auth/register/",
         "/auth/users/reset_password/",
-        "/auth/users/reset_password_confirm/",
         "/auth/login/",
         "/auth/jwt/refresh/",
         "/auth/jwt/verify/",
         "/swagger/",
         "/admin/",
+        "/",
     ]
 
     def process_request(self, request):
