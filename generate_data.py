@@ -1,9 +1,9 @@
+import asyncio
 import logging
 import random
 import string
-import time
 
-import requests
+import httpx
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
@@ -27,20 +27,31 @@ def generate_random_params():
 
 
 BASE_URLS = [
-    "https://www.bbc.com/news/world-europe-66858850",
-    "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
-    "https://www.last.fm/music/The+Beatles/_/Hey+Jude",
-    "https://en.wikipedia.org/wiki/Open_Graph_protocol",
-    "https://soundcloud.com/user-532218444/who-we-are",
-    "https://vimeo.com/76979871",
-    "https://www.goodreads.com/book/show/13496.A_Game_of_Thrones",
+    "https://www.apple.com",
+    "https://www.microsoft.com",
+    "https://www.salesforce.com",
     "https://github.com/python/cpython",
+    "https://pypi.org/project/requests/",
+    "https://www.goodreads.com/book/show/13496.A_Game_of_Thrones",
+    "https://www.goodreads.com/book/show/4671.The_Great_Gatsby",
+    "https://openlibrary.org/works/OL82563W/War_and_Peace",
+    "https://openlibrary.org/works/OL45883W/Pride_and_Prejudice",
+    "https://www.bbc.com/news/world-europe-66858850",
+    "https://news.ycombinator.com/",
     "https://realpython.com/python-requests/",
     "https://developer.mozilla.org/en-US/docs/Web/HTML",
-    "https://pypi.org/project/requests/",
-    "https://news.ycombinator.com/",
-    "https://www.rottentomatoes.com/m/inception",
+    "https://www.last.fm/music/The+Beatles/_/Hey+Jude",
+    "https://soundcloud.com/user-532218444/who-we-are",
+    "https://soundcloud.com/radiohead/creep",
+    "https://soundcloud.com/the-weeknd/blinding-lights",
+    "https://soundcloud.com/edsheeran/shape-of-you",
+    "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
+    "https://vimeo.com/76979871",
+    "https://music.youtube.com/watch?v=Zi_XLOBDo_Y",
+    "https://music.youtube.com/watch?v=3JZ_D3ELwOQ",
     "https://www.apple.com/macbook-air/",
+    "https://www.salesforce.com",
+    "https://www.rottentomatoes.com/m/inception",
 ]
 
 
@@ -49,7 +60,10 @@ def generate_urls_with_params(base_urls, count=100):
     while len(urls) < count:
         base_url = random.choice(base_urls)
         params = generate_random_params()
-        full_url = f"{base_url}?{params}"
+        if "?" in base_url:
+            full_url = f"{base_url}&{params}"
+        else:
+            full_url = f"{base_url}?{params}"
         urls.add(full_url)
     return list(urls)
 
@@ -62,72 +76,74 @@ def generate_random_password():
     return "testpassword"
 
 
-def register_user():
+async def send_request(url, method="post", data=None, headers=None):
+    async with httpx.AsyncClient() as client:
+        try:
+            response = await client.request(method, url, json=data, headers=headers)
+            response.raise_for_status()
+            return response
+        except httpx.HTTPStatusError as exc:
+            logger.error(
+                f"HTTP error: {exc.response.status_code} - {exc.response.text}"
+            )
+        except Exception as e:
+            logger.error(f"Request failed: {e}")
+        return None
+
+
+async def register_user():
     email = generate_random_email()
     password = generate_random_password()
     data = {"email": email, "password": password}
-    response = requests.post(REGISTER_URL, json=data)
-
-    if response.status_code == 201:
+    response = await send_request(REGISTER_URL, data=data)
+    if response and response.status_code == 201:
         logger.info(f"User registered: {email}")
         return email, password
-    else:
-        logger.error(f"Failed to register user: {response.text}")
-        return None, None
+    return None, None
 
 
-def login_user(email, password):
+async def login_user(email, password):
     data = {"email": email, "password": password}
-    response = requests.post(LOGIN_URL, json=data)
-
-    if response.status_code == 200:
+    response = await send_request(LOGIN_URL, data=data)
+    if response and response.status_code == 200:
         tokens = response.json()
         access_token = tokens.get("access")
         logger.info(f"User logged in: {email}")
         return access_token
-    else:
-        logger.error(f"Failed to log in user {email}: {response.text}")
-        return None
+    return None
 
 
-def create_links_for_user(access_token, num_links):
+async def create_links_for_user(access_token, num_links):
     headers = {"Authorization": f"Bearer {access_token}"}
-    used_urls = set()
+    urls = generate_urls_with_params(BASE_URLS, num_links)
 
-    for _ in range(num_links):
-        available_urls = list(set(generate_urls_with_params(BASE_URLS)))
-        if not available_urls:
-            break
-
-        url_data = {"url": random.choice(available_urls)}
-        response = requests.post(LINKS_URL, json=url_data, headers=headers)
-
-        if response.status_code == 201:
-            logger.info(f"Link created: {url_data['url']}")
-            used_urls.add(url_data["url"])
+    for url in urls:
+        url_data = {"url": url}
+        response = await send_request(LINKS_URL, data=url_data, headers=headers)
+        if response and response.status_code == 201:
+            logger.info(f"Link created: {url}")
         else:
-            logger.error(f"Failed to create link: {response.text}")
+            logger.error(f"Failed to create link")
 
 
-def process_user(min_links=1, max_links=10):
-    email, password = register_user()
+async def process_user(min_links, max_links):
+    email, password = await register_user()
     if not email or not password:
         return
 
-    access_token = login_user(email, password)
+    access_token = await login_user(email, password)
     if not access_token:
         return
 
     num_links = random.randint(min_links, max_links)
     logger.info(f"Creating {num_links} links for user {email}")
-    create_links_for_user(access_token, num_links)
+    await create_links_for_user(access_token, num_links)
 
 
-def main(num_users=10, min_links=0, max_links=20, delay=0.5):
-    for _ in range(num_users):
-        process_user(min_links, max_links)
-        time.sleep(delay)
+async def main(num_users=25, min_links=0, max_links=50):
+    tasks = [process_user(min_links, max_links) for _ in range(num_users)]
+    await asyncio.gather(*tasks)
 
 
 if __name__ == "__main__":
-    main()
+    asyncio.run(main())
