@@ -5,8 +5,9 @@ from rest_framework.exceptions import AuthenticationFailed
 class AddAuthorizationHeaderMiddleware(MiddlewareMixin):
     PUBLIC_ENDPOINTS = [
         "/auth/register/",
-        "/auth/users/reset_password/",
         "/auth/login/",
+        "/auth/users/reset_password/",
+        "/auth/users/reset_password_confirm/",
         "/auth/jwt/refresh/",
         "/auth/jwt/verify/",
         "/swagger/",

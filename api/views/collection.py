@@ -92,6 +92,11 @@ class CollectionViewSet(viewsets.ModelViewSet):
             400: "Bad request - validation errors.",
         },
     )
+    @action(
+        detail=False,
+        methods=["get"],
+        url_path="search",
+    )
     def search(self, request, *args, **kwargs):
         search_query = request.query_params.get("search")
         link_id = request.query_params.get("link_id")

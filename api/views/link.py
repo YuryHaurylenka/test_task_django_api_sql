@@ -89,12 +89,6 @@ class LinkViewSet(viewsets.ModelViewSet):
     def retrieve(self, request, *args, **kwargs):
         return super().retrieve(request, *args, **kwargs)
 
-    @action(
-        detail=False,
-        methods=["get"],
-        url_path="search",
-        permission_classes=[permissions.IsAuthenticated],
-    )
     @swagger_auto_schema(
         operation_summary="Search Links by URL",
         operation_description="Search for links owned by the authenticated user using match on 'url'.",
@@ -114,6 +108,12 @@ class LinkViewSet(viewsets.ModelViewSet):
             ),
             400: "Bad request - validation errors.",
         },
+    )
+    @action(
+        detail=False,
+        methods=["get"],
+        url_path="search",
+        permission_classes=[permissions.IsAuthenticated],
     )
     def search(self, request, *args, **kwargs):
         search_query = request.query_params.get("search", "").strip().lower()
