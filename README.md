@@ -1,6 +1,9 @@
 # Django API Project - Test Task
 
-This project is a Django-based API designed for managing users, links, and collections, with capabilities for fetching
+**This project was developed as part of a test task.** The full description of the technical requirements can be
+found [here](https://github.com/YuryHaurylenka/test_task_django_api_sql/blob/main/test_task_eng.md).
+This project is a Django-based API designed for managing users, links, and collections, with
+capabilities for fetching
 Open Graph metadata and categorizing links. The system supports user registration, authentication using JWT tokens, and
 features for creating and managing collections of various link types (e.g., music, book, article, video). Additionally,
 the project includes an **SQL task** for identifying the top 10 users who have saved the most links.
@@ -217,6 +220,8 @@ the [MIT License](https://github.com/YuryHaurylenka/test_task_django_api_sql/blo
 
 # RU
 
+**Этот проект является тестовым заданием.** Полное описание Технического Задания (ТЗ)
+доступно [здесь](https://github.com/YuryHaurylenka/test_task_django_api_sql/blob/main/test_task_ru.md).
 Этот проект представляет собой API на основе Django для управления пользователями, ссылками и коллекциями с возможностью
 получения метаданных Open Graph и категоризации ссылок. Система поддерживает регистрацию пользователей, аутентификацию с
 использованием JWT токенов и включает функции для создания и управления коллекциями различных типов ссылок (например,
