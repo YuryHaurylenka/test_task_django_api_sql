@@ -10,10 +10,14 @@ schema_view = get_schema_view(
     openapi.Info(
         title="Django API",
         default_version="v1",
-        description="API documentation for the test project",
-        terms_of_service="https://www.example.com/terms/",
-        contact=openapi.Contact(email="gavrilenkoyury@gmail.com"),
-        license=openapi.License(name="MIT License"),
+        description="API documentation for the project. You can view the source code on [GitHub](https://github.com/YuryHaurylenka/test_task_django_api_sql).",
+        terms_of_service="https://github.com/YuryHaurylenka/test_task_django_api_sql/blob/main/LICENSE",
+        contact=openapi.Contact(
+            email="gavrilenkoyury@gmail.com",
+            url="https://t.me/yuraaaaaaaaaaaaaaaaaaaaaaa",
+            name="Telegram"
+        ),
+        license=openapi.License(name="MIT License", url="https://opensource.org/licenses/MIT"),
     ),
     public=True,
     permission_classes=[permissions.AllowAny],
