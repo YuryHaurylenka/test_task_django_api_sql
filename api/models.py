@@ -47,17 +47,31 @@ User = get_user_model()
 
 
 class Link(models.Model):
+    TYPE_CHOICES = [
+        ("website", "Website"),
+        ("book", "Book"),
+        ("article", "Article"),
+        ("music", "Music"),
+        ("video", "Video"),
+    ]
+
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="links")
-    url = models.URLField(max_length=255)
-    title = models.CharField(max_length=100, blank=True)
+    url = models.URLField(unique=True)
+    title = models.CharField(max_length=255, blank=True)
     description = models.TextField(blank=True, null=True)
     image = models.URLField(blank=True, null=True)
-    type = models.CharField(max_length=50, default="website")
+    type = models.CharField(max_length=50, choices=TYPE_CHOICES, default="website")
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
     class Meta:
-        unique_together = ("user", "url")
+        indexes = [
+            models.Index(fields=["user", "type"]),
+            models.Index(fields=["url"]),
+        ]
+        ordering = ["-created_at"]
+        verbose_name = "Link"
+        verbose_name_plural = "Links"
 
     def __str__(self):
         return self.title or self.url
@@ -76,9 +90,20 @@ class Collection(models.Model):
 
 
 class PasswordResetCode(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="reset_codes")
     code = models.UUIDField(default=uuid.uuid4, unique=True)
     created_at = models.DateTimeField(auto_now_add=True)
 
     def is_valid(self):
         return timezone.now() < self.created_at + timedelta(minutes=30)
+
+    def save(self, *args, **kwargs):
+        PasswordResetCode.objects.filter(user=self.user).delete()
+        super().save(*args, **kwargs)
+
+    class Meta:
+        indexes = [
+            models.Index(fields=["user", "created_at"]),
+        ]
+        verbose_name = "Password Reset Code"
+        verbose_name_plural = "Password Reset Codes"
