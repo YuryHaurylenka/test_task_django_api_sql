@@ -126,7 +126,7 @@ class CustomTopUsersViewSet(viewsets.ViewSet):
     )
     @swagger_auto_schema(
         operation_summary="Top 10 Users",
-        operation_description="Retrieve top 10 users with the highest number of saved links, sorted by date of registration.",
+        operation_description="Retrieve top 10 users with the highest number of links, sorted by date of registration.",
         responses={
             200: openapi.Response(
                 description="Top 10 users retrieved successfully",
@@ -173,9 +173,8 @@ class CustomTopUsersViewSet(viewsets.ViewSet):
                 "article": row[4],
                 "music": row[5],
                 "video": row[6],
-                "company": row[7],
-                "object": row[8],
-                "error": row[9],
+                "object": row[7],
+                "error": row[8],
             }
             for row in results
         ]

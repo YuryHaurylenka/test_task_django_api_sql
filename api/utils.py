@@ -14,6 +14,29 @@ def fetch_og_data(url):
         response.raise_for_status()
         soup = BeautifulSoup(response.content, "html.parser")
 
+        og_type = (
+            soup.find("meta", property="og:type")["content"]
+            if soup.find("meta", property="og:type")
+            else None
+        )
+
+        if og_type:
+            og_type = og_type.lower()
+            if "music" in og_type:
+                content_type = "music"
+            elif "book" in og_type:
+                content_type = "book"
+            elif "article" in og_type or "blog" in og_type:
+                content_type = "article"
+            elif "video" in og_type:
+                content_type = "video"
+            elif "object" in og_type:
+                content_type = "object"
+            else:
+                content_type = "website"
+        else:
+            content_type = "website"
+
         og_data = {
             "title": (
                 soup.find("meta", property="og:title")["content"]
@@ -28,13 +51,9 @@ def fetch_og_data(url):
             "image": (
                 soup.find("meta", property="og:image")["content"]
                 if soup.find("meta", property="og:image")
-                else None
+                else "https://example.com/default-image.jpg"
             ),
-            "type": (
-                soup.find("meta", property="og:type")["content"]
-                if soup.find("meta", property="og:type")
-                else None
-            ),
+            "type": content_type,
         }
 
         if not og_data["title"]:
@@ -46,12 +65,6 @@ def fetch_og_data(url):
                 if soup.find("meta", attrs={"name": "description"})
                 else "No description available"
             )
-
-        if not og_data["image"]:
-            og_data["image"] = "https://example.com/default-image.jpg"
-
-        if not og_data["type"]:
-            og_data["type"] = "website"
 
         return og_data
 
@@ -80,7 +93,6 @@ def save_to_csv(data, file_path):
             "article",
             "music",
             "video",
-            "company",
             "object",
             "error",
         ]
