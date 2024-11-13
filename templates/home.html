@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Link Collection API - Test Assignment</title>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@300;400;600&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Nunito', sans-serif;
+            background: radial-gradient(circle at top, #84fab0, #8fd3f4);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            color: #333;
+            overflow: hidden;
+        }
+        .container {
+            background-color: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 40px;
+            text-align: center;
+            max-width: 450px;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
+            transform: scale(1);
+            transition: transform 0.4s ease;
+        }
+        .container:hover {
+            transform: scale(1.05);
+        }
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 20px;
+            color: #00796b;
+            text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.1);
+        }
+        p {
+            font-size: 1.2rem;
+            margin-bottom: 30px;
+            color: #555;
+        }
+        .links {
+            list-style: none;
+            padding: 0;
+        }
+        .links li {
+            margin: 15px 0;
+        }
+        .links a {
+            text-decoration: none;
+            color: #ffffff;
+            font-weight: bold;
+            font-size: 1.1rem;
+            padding: 12px 24px;
+            border-radius: 25px;
+            background: linear-gradient(135deg, #43cea2, #185a9d);
+            box-shadow: 0 5px 15px rgba(0, 123, 255, 0.3);
+            transition: background-color 0.4s, transform 0.3s;
+        }
+        .links a:hover {
+            background: linear-gradient(135deg, #185a9d, #43cea2);
+            transform: translateY(-5px);
+        }
+        .rocket {
+            font-size: 4rem;
+            margin-bottom: 25px;
+            animation: float 2.5s ease-in-out infinite;
+        }
+        footer {
+            margin-top: 40px;
+            font-size: 1rem;
+            color: #777;
+        }
+        @keyframes float {
+            0%, 100% {
+                transform: translateY(0);
+            }
+            50% {
+                transform: translateY(-10px);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="rocket">🚀</div>
+        <h1>Link Collection API</h1>
+        <p>Welcome to the test assignment. Explore the API below:</p>
+        
+        <ul class="links">
+            <li><a href="/admin/">Admin Panel</a></li>
+            <li><a href="/swagger/">API Documentation</a></li>
+        </ul>
+
+        <footer>
+            <p>Developed by <strong>Yury Haurylenka</strong></p>
+        </footer>
+    </div>
+</body>
+</html>
