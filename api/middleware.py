@@ -1,8 +1,8 @@
-from django.utils.deprecation import MiddlewareMixin
+from rest_framework.authentication import get_authorization_header
 from rest_framework.exceptions import AuthenticationFailed
 
 
-class AddAuthorizationHeaderMiddleware(MiddlewareMixin):
+class AddAuthorizationHeaderMiddleware:
     PUBLIC_ENDPOINTS = [
         "/auth/register/",
         "/auth/login/",
@@ -12,19 +12,24 @@ class AddAuthorizationHeaderMiddleware(MiddlewareMixin):
         "/auth/jwt/verify/",
         "/swagger/",
         "/admin/",
-        "/",
     ]
 
-    def process_request(self, request):
+    def __init__(self, get_response):
+        self.get_response = get_response
+
+    def __call__(self, request):
+        if request.path == "/":
+            return self.get_response(request)
+
         if any(request.path.startswith(endpoint) for endpoint in self.PUBLIC_ENDPOINTS):
-            return
-        if "HTTP_AUTHORIZATION" in request.META:
-            return
+            return self.get_response(request)
 
-        access_token = request.session.get("access_token")
-
-        if access_token:
-            if "HTTP_AUTHORIZATION" not in request.META:
+        auth_header = get_authorization_header(request)
+        if not auth_header:
+            access_token = request.session.get("access_token")
+            if access_token:
                 request.META["HTTP_AUTHORIZATION"] = f"Bearer {access_token}"
-        else:
-            raise AuthenticationFailed("Token is missing")
+            else:
+                raise AuthenticationFailed("Token is missing")
+
+        return self.get_response(request)
