@@ -1,8 +1,19 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
-
 from .models import Collection, CustomUser, Link
 from .utils import fetch_og_data
+
+
+class LinkInline(admin.TabularInline):
+    model = Link
+    extra = 0
+    fields = ("url", "title", "type", "created_at", "updated_at")
+    readonly_fields = ("url", "title", "type", "created_at", "updated_at")
+    can_delete = False
+    show_change_link = True
+
+    def has_add_permission(self, request, obj=None):
+        return False
 
 
 @admin.register(CustomUser)
@@ -27,6 +38,7 @@ class CustomUserAdmin(UserAdmin):
             },
         ),
     )
+    inlines = [LinkInline]
 
 
 @admin.register(Link)
