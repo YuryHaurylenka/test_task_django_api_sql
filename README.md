@@ -203,7 +203,9 @@ Access the admin panel at `/admin` for managing users, links, and collections.
 
 ## 📜 License
 
-This project is licensed under the MIT License.
+This project is licensed under
+the [MIT License](https://github.com/YuryHaurylenka/test_task_django_api_sql/blob/main/LICENSE).
+
 
 ---
 
@@ -397,7 +399,7 @@ docker-compose exec web python generate_data.py
 
 ## 📜 Лицензия
 
-Проект лицензирован под лицензией MIT.
+Проект лицензирован под [MIT Лицензией](https://github.com/YuryHaurylenka/test_task_django_api_sql/blob/main/LICENSE)..
 
 ### Автор
 
