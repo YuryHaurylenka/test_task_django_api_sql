@@ -196,7 +196,6 @@ DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
 
 DJOSER = {
     "LOGIN_FIELD": "email",
-    "PASSWORD_RESET_CONFIRM_URL": "auth/users/reset_password_confirm/",
     "SERIALIZERS": {
         "user_create": "api.serializers.CustomUserCreateSerializer",
         "user": "djoser.serializers.UserSerializer",
