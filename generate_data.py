@@ -71,7 +71,7 @@ def generate_random_email():
     return f"user{random.randint(1, 99999)}@example.com"
 
 
-def generate_random_password():
+def generate_test_password():
     return "testpassword"
 
 
@@ -92,7 +92,7 @@ async def send_request(url, method="post", data=None, headers=None):
 
 async def register_user():
     email = generate_random_email()
-    password = generate_random_password()
+    password = generate_test_password()
     data = {"email": email, "password": password}
     response = await send_request(REGISTER_URL, data=data)
     if response and response.status_code == 201:

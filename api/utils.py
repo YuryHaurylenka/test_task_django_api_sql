@@ -59,7 +59,7 @@ def fetch_og_data(url):
             "image": (
                 soup.find("meta", property="og:image")["content"]
                 if soup.find("meta", property="og:image")
-                else "https://example.com/default-image.jpg"
+                else "No images"
             ),
             "type": content_type,
         }
@@ -71,7 +71,7 @@ def fetch_og_data(url):
             og_data["description"] = (
                 soup.find("meta", attrs={"name": "description"})["content"]
                 if soup.find("meta", attrs={"name": "description"})
-                else "No description available"
+                else "No description"
             )
 
         return og_data
