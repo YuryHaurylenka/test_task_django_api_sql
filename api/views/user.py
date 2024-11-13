@@ -1,5 +1,6 @@
 import os
 
+from django.contrib.auth import get_user_model
 from django.db import connection
 from djoser.views import UserViewSet
 from drf_yasg import openapi
@@ -8,32 +9,48 @@ from rest_framework import status, viewsets
 from rest_framework.decorators import action
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
+from rest_framework.views import APIView
 from rest_framework_simplejwt.views import (
     TokenObtainPairView,
     TokenRefreshView,
     TokenVerifyView,
 )
 
+from api.serializers import (
+    CustomTokenObtainPairSerializer,
+    CustomPasswordResetConfirmSerializer,
+)
 from api.utils import save_to_csv
+
+User = get_user_model()
 
 
 class CustomTokenObtainPairView(TokenObtainPairView):
-    permission_classes = [AllowAny]
+    serializer_class = CustomTokenObtainPairSerializer
 
     @swagger_auto_schema(
-        operation_summary="Obtain JWT token",
-        operation_description="Obtain a pair of access and refresh tokens using email and password.",
+        operation_summary="User Login",
+        operation_description="Obtain a JWT token using email and password.",
+        request_body=openapi.Schema(
+            type=openapi.TYPE_OBJECT,
+            properties={
+                "email": openapi.Schema(
+                    type=openapi.TYPE_STRING,
+                    description="User email",
+                    example="user@example.com",
+                ),
+                "password": openapi.Schema(
+                    type=openapi.TYPE_STRING,
+                    description="User password",
+                    example="password123",
+                ),
+            },
+            required=["email", "password"],
+        ),
         responses={
-            200: openapi.Response(
-                description="Token successfully obtained",
-                examples={
-                    "application/json": {
-                        "refresh": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
-                        "access": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
-                    }
-                },
-            ),
-            401: "Invalid credentials",
+            200: "Token successfully obtained",
+            404: "User not found",
+            400: "Invalid credentials",
         },
     )
     def post(self, request, *args, **kwargs):
@@ -41,9 +58,10 @@ class CustomTokenObtainPairView(TokenObtainPairView):
 
         if response.status_code == status.HTTP_200_OK:
             access_token = response.data.get("access")
-
             if access_token:
                 request.session["access_token"] = access_token
+                request.session.save()
+
         return response
 
 
@@ -64,10 +82,27 @@ class CustomUserViewSet(UserViewSet):
     @swagger_auto_schema(
         operation_summary="Password reset",
         operation_description="Request a password reset email.",
+        request_body=openapi.Schema(
+            type=openapi.TYPE_OBJECT,
+            properties={
+                "email": openapi.Schema(
+                    type=openapi.TYPE_STRING,
+                    description="User email address",
+                    example="user@example.com",
+                ),
+            },
+            required=["email"],
+        ),
         responses={
-            200: "Password reset email sent",
-            400: "Bad request - invalid email",
+            204: "Password reset email sent",
+            400: "Invalid email",
+            404: "User not found",
         },
+    )
+    @action(
+        detail=False,
+        methods=["post"],
+        url_path="reset_password",
     )
     def reset_password(self, request, *args, **kwargs):
         return super().reset_password(request, *args, **kwargs)
@@ -83,6 +118,41 @@ class CustomUserViewSet(UserViewSet):
     )
     def set_password(self, request, *args, **kwargs):
         return super().set_password(request, *args, **kwargs)
+
+
+class CustomResetPasswordConfirmView(APIView):
+    serializer_class = CustomPasswordResetConfirmSerializer
+
+    @swagger_auto_schema(
+        operation_summary="Password reset confirm",
+        operation_description="URL for accessing to reset password from mail",
+        responses={
+            200: "Password reset confirmed",
+            400: "Bad request",
+        },
+    )
+    def post(self, request, *args, **kwargs):
+        token = request.query_params.get("token")
+        email = request.query_params.get("email")
+
+        if not token or not email:
+            return Response(
+                {"detail": "Token and email are required in the URL."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        request.data["email"] = email
+        request.data["token"] = token
+
+        serializer = CustomPasswordResetConfirmSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(
+                {"detail": "Password has been reset successfully."},
+                status=status.HTTP_200_OK,
+            )
+
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 class CustomTokenRefreshView(TokenRefreshView):
