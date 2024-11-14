@@ -122,7 +122,7 @@ enabled.
 
 1. **Build and run the containers**:
    ```bash
-   docker-compose up --build
+   docker-compose up --build -d
    ```
 
 2. **Access the application**:
@@ -337,7 +337,7 @@ SESSION_COOKIE_SECURE=False
 
 1. **Соберите и запустите контейнеры**:
    ```bash
-   docker-compose up --build
+   docker-compose up --build -d
    ```
 
 2. **Доступ к приложению**:
