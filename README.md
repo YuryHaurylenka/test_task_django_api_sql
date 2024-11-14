@@ -10,18 +10,18 @@ the project includes an **SQL task** for identifying the top 10 users who have s
 
 ## Table of Contents
 
-- [Features](#-features)
-- [Requirements](#-requirements)
-- [Installation](#-installation)
-- [Environment Variables](#-example-env-file)
-    - [Explanation of variables](#-explanation-of-environment-variables)
-    - [Instruction for email password](#-detailed-instructions-for-email_host_password)
-- [Running the Project](#-running-the-project)
-- [API Endpoints](#-api-endpoints)
-- [Generating Sample Data](#-generating-sample-data)
-- [SQL Task](#-sql-task)
-- [Admin Panel and Email Setup](#-admin-panel)
-- [License](#-license)
+- [Features](#features)
+- [Requirements](#requirements)
+- [Installation](#installation)
+- [Environment Variables](#example-env-file)
+    - [Explanation of variables](#explanation-of-environment-variables)
+    - [Instruction for email password](#detailed-instructions-for-email_host_password)
+- [Running the Project](#running-the-project)
+- [API Endpoints](#api-endpoints)
+- [Generating Sample Data](#generating-sample-data)
+- [SQL Task](#sql-task)
+- [Admin Panel and Email Setup](#admin-panel)
+- [License](#license)
 
 ---
 
@@ -93,7 +93,7 @@ SESSION_COOKIE_SECURE=False
 - **`ACCESS_TOKEN_LIFETIME_MINUTES`**: Lifetime of the JWT access token in minutes.
 - **`REFRESH_TOKEN_LIFETIME_DAYS`**: Lifetime of the JWT refresh token in days.
 - **`EMAIL_HOST_USER`**: The email address used to send emails (e.g., password reset emails).
-- **`EMAIL_HOST_PASSWORD`** [Instruction](#-detailed-instructions-for-email_host_password).
+- **`EMAIL_HOST_PASSWORD`** [Instruction](#detailed-instructions-for-email_host_password).
 - **`SECURE_SSL_REDIRECT`**: If set to `True`, all HTTP requests will be redirected to HTTPS.
 - **`CSRF_COOKIE_SECURE`** & **`SESSION_COOKIE_SECURE`**: Ensures that cookies are only sent over HTTPS. Set to `False`
   in development.
@@ -118,7 +118,7 @@ enabled.
     - Select **Other (Custom name)**, enter a name (e.g., "Django App"), and click **Generate**.
     - Copy the 16-character password that is generated and paste it to .
 
-## 🏃 Running the Project
+## Running the Project
 
 1. **Build and run the containers**:
    ```bash
@@ -193,7 +193,7 @@ docker-compose exec web python generate_data.py
 
 There is an API endpoint available at `/api/users/top-users/` that executes the SQL script located in the root directory
 under the filename `top_users.sql`. Before testing, you can generate sample users and links using
-the [script](#-generating-sample-data)
+the [script](#generating-sample-data)
 
 ### How it works:
 
@@ -235,18 +235,18 @@ the [MIT License](https://github.com/YuryHaurylenka/test_task_django_api_sql/blo
 
 ## Содержание
 
-- [Функциональность](#-функциональность)
-- [Требования](#-стек)
-- [Установка](#-установка)
-- [Переменные окружения](#-пример-файла-env)
-    - [Объяснение переменных окружения](#-объяснение-переменных-окружения)
-    - [Инструкция по настройке email](#-инструкция-по-настройке-email_host_password)
-- [Запуск проекта](#-запуск-проекта)
-- [API эндпоинты](#-api-эндпоинты)
-- [Генерация тестовых данных](#-генерация-тестовых-данных)
-- [SQL задача](#-sql-задача)
-- [Админка и настройка Email](#-админка)
-- [Лицензия](#-лицензия)
+- [Функциональность](#функциональность)
+- [Требования](#стек)
+- [Установка](#установка)
+- [Переменные окружения](#пример-файла-env)
+    - [Объяснение переменных окружения](#объяснение-переменных-окружения)
+    - [Инструкция по настройке email](#инструкция-по-настройке-email_host_password)
+- [Запуск проекта](#запуск-проекта)
+- [API эндпоинты](#api-эндпоинты)
+- [Генерация тестовых данных](#генерация-тестовых-данных)
+- [SQL задача](#sql-задание)
+- [Админка и настройка Email](#админка)
+- [Лицензия](#лицензия)
 
 ## Функциональность
 
@@ -316,7 +316,7 @@ SESSION_COOKIE_SECURE=False
 - **`ACCESS_TOKEN_LIFETIME_MINUTES`**: Время жизни JWT access токена в минутах.
 - **`REFRESH_TOKEN_LIFETIME_DAYS`**: Время жизни JWT refresh токена в днях.
 - **`EMAIL_HOST_USER`**: Email-адрес, используемый для отправки писем (для сброса пароля).
-- **`EMAIL_HOST_PASSWORD`** [Инструкция](#-инструкция-по-настройке-email_host_password).
+- **`EMAIL_HOST_PASSWORD`** [Инструкция](#инструкция-по-настройке-email_host_password).
 - **`SECURE_SSL_REDIRECT`**: Ставим `False`. Если установлено в `True`, все HTTP-запросы будут перенаправляться на
   HTTPS).
 - **`CSRF_COOKIE_SECURE`** и **`SESSION_COOKIE_SECURE`**: Обеспечивает отправку cookie только по HTTPS.
@@ -396,7 +396,7 @@ docker-compose exec web python generate_data.py
 
 Доступен API эндпоинт `/api/users/top-users/`, который выполняет SQL скрипт, расположенный в корневой директории под
 названием `top_users.sql`. Перед использованием, вы можете сгенерировать тестовых пользователей и ссылки с
-помощью [скрипта](#-генерация-тестовых-данных).
+помощью [скрипта](#генерация-тестовых-данных).
 
 ### Как это работает:
 
